@@ -40,8 +40,24 @@
 		}
 	},
 	"remoteUser": "sail",
-	"postCreateCommand": "chown -R 1000:1000 /var/www/html 2>/dev/null || true"
-	// "forwardPorts": [],
+	"postCreateCommand": "chown -R 1000:1000 /var/www/html 2>/dev/null || true",
+	"forwardPorts": [
+		8080,
+		80,
+		5173
+	],
+	"portsAttributes": {
+		"80": {
+			"label": "Application",
+			"onAutoForward": "notify"
+		},
+		"8080": {
+			"label": "phpMyAdmin"
+		},
+		"5173": {
+			"label": "Vite (hmr)"
+		}
+	}
 	// "runServices": [],
 	// "shutdownAction": "none",
 }
