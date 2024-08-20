@@ -3,9 +3,11 @@
 namespace App\Filament\Resources\FileResource\RelationManagers;
 
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -46,8 +48,19 @@ class VersionsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('name')
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->colors([
+                        'secondary' => 'draft',
+                        'success' => 'active',
+                        'danger' => 'inactive',
+                    ])
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->getStateUsing(fn($record) => $record->created_at->format('d-m/Y H:i'))
+                    ->sortable(),
             ])
             ->filters([
                 //
@@ -56,6 +69,34 @@ class VersionsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
+                CreateAction::make('changeStatus')
+                ->label('Change Status')
+                ->modalHeading('Change Status')
+                ->modalButton('Change')
+                ->disableCreateAnother()
+                ->action(function ($record, $data) {
+                    // Update the status of the selected record
+                    $record->status = $data['status'];
+
+                    // If the status is 'active', set all other records to 'inactive'
+                    if ($data['status'] === 'active') {
+                        $record->newQuery()->where('status', 'active')->update(['status' => 'inactive']);
+                    }
+
+                    $record->save();
+                })
+                ->form(function ($record) {
+                    return [
+                        \Filament\Forms\Components\Select::make('status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'active' => 'Active',
+                                'inactive' => 'Inactive',
+                            ])
+                            ->default($record->status)
+                            ->required(),
+                        ];
+                }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
