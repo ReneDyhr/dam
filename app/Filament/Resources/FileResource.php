@@ -66,7 +66,8 @@ class FileResource extends Resource
                                     ->directory('form-attachments')
                                     ->imageEditor(),
                             ])
-                            ->addable(false),
+                            ->addable(false)
+                            ->deletable(false),
                         Repeater::make('versions')
                             ->visible(fn($record, $get) => $get('type_id') == 1)
                             ->relationship()
@@ -78,7 +79,8 @@ class FileResource extends Resource
                                     ->acceptedFileTypes(['application/pdf'])
                                     ->directory('form-attachments'),
                             ])
-                            ->addable(false),
+                            ->addable(false)
+                            ->deletable(false),
                     ]) : Forms\Components\Hidden::make(""),
             ]);
     }
