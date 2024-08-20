@@ -66,7 +66,7 @@ class VersionsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->createAnother(false),
             ])
             ->actions([
                 CreateAction::make('changeStatus')
@@ -97,7 +97,6 @@ class VersionsRelationManager extends RelationManager
                             ->required(),
                         ];
                 }),
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

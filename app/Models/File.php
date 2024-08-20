@@ -18,7 +18,7 @@ class File extends Model
             $slug = Str::slug($file->name);
             $originalSlug = $slug;
             $counter = 1;
-            while (File::where('slug', $slug)->exists()) {
+            while (File::withTrashed()->where('slug', $slug)->exists()) {
                 $slug = $originalSlug . '-' . $counter++;
             }
             $file->slug = $slug;
@@ -28,11 +28,14 @@ class File extends Model
             $slug = Str::slug($file->name);
             $originalSlug = $slug;
             $counter = 1;
-            File::where('slug', $slug)->where('id', '!=', $file->id)->ddRawSql();
-            while (File::where('slug', $slug)->where('id', '!=', $file->id)->exists()) {
+            while (File::withTrashed()->where('slug', $slug)->where('id', '!=', $file->id)->exists()) {
                 $slug = $originalSlug . '-' . $counter++;
             }
             $file->slug = $slug;
+        });
+
+        static::deleting(function ($file) {
+            $file->versions()->delete();
         });
 
     }
