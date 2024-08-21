@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Route;
 use App\Models\File;
 
@@ -15,7 +17,7 @@ Route::get('/files/{slug}', function ($slug) {
 
     // Check if the file exists
     if (!file_exists($path)) {
-        abort(404);
+        return response()->setStatusCode(404);
     }
 
     // Determine the file's MIME type
@@ -23,6 +25,8 @@ Route::get('/files/{slug}', function ($slug) {
 
     // Create a response with the file
     return response()->file($path, [
-        'Content-Type' => $mimeType
+        'Content-Type' => $mimeType,
+        'Cache-Control' => 'max-age=86400',
+        'Expires' => now()->addDay()->toRfc7231String(),
     ]);
 });
