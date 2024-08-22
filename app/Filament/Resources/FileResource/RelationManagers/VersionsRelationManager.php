@@ -23,15 +23,21 @@ class VersionsRelationManager extends RelationManager
             case 'pdf':
                 $upload = Forms\Components\FileUpload::make('path')
                     ->directory('form-attachments')
-                    ->acceptedFileTypes(['application/pdf'])
-                    ->visibility('private');
+                    ->disk('s3')
+                    ->acceptedFileTypes(['application/pdf']);
+                break;
+            case 'videos':
+                $upload = Forms\Components\FileUpload::make('path')
+                    ->directory('form-attachments')
+                    ->disk('s3')
+                    ->acceptedFileTypes(['video/*']);
                 break;
 
             default:
                 $upload = Forms\Components\FileUpload::make('path')
                     ->image()
+                    ->disk('s3')
                     ->directory('form-attachments')
-                    ->visibility('private')
                     ->imageEditor();
                 break;
         }
@@ -70,33 +76,33 @@ class VersionsRelationManager extends RelationManager
             ])
             ->actions([
                 CreateAction::make('changeStatus')
-                ->label('Change Status')
-                ->modalHeading('Change Status')
-                ->modalButton('Change')
-                ->disableCreateAnother()
-                ->action(function ($record, $data) {
-                    // Update the status of the selected record
-                    $record->status = $data['status'];
+                    ->label('Change Status')
+                    ->modalHeading('Change Status')
+                    ->modalButton('Change')
+                    ->disableCreateAnother()
+                    ->action(function ($record, $data) {
+                        // Update the status of the selected record
+                        $record->status = $data['status'];
 
-                    // If the status is 'active', set all other records to 'inactive'
-                    if ($data['status'] === 'active') {
-                        $record->newQuery()->where('status', 'active')->update(['status' => 'inactive']);
-                    }
+                        // If the status is 'active', set all other records to 'inactive'
+                        if ($data['status'] === 'active') {
+                            $record->newQuery()->where('status', 'active')->update(['status' => 'inactive']);
+                        }
 
-                    $record->save();
-                })
-                ->form(function ($record) {
-                    return [
-                        \Filament\Forms\Components\Select::make('status')
-                            ->options([
-                                'draft' => 'Draft',
-                                'active' => 'Active',
-                                'inactive' => 'Inactive',
-                            ])
-                            ->default($record->status)
-                            ->required(),
+                        $record->save();
+                    })
+                    ->form(function ($record) {
+                        return [
+                            \Filament\Forms\Components\Select::make('status')
+                                ->options([
+                                    'draft' => 'Draft',
+                                    'active' => 'Active',
+                                    'inactive' => 'Inactive',
+                                ])
+                                ->default($record->status)
+                                ->required(),
                         ];
-                }),
+                    }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

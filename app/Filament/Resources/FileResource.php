@@ -65,6 +65,7 @@ class FileResource extends Resource
                                     ->maxLength(255),
                                 Forms\Components\FileUpload::make('path')
                                     ->image()
+                                    ->disk('s3')
                                     ->directory('form-attachments')
                                     ->imageEditor(),
                             ])
@@ -78,7 +79,22 @@ class FileResource extends Resource
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\FileUpload::make('path')
+                                    ->disk('s3')
                                     ->acceptedFileTypes(['application/pdf'])
+                                    ->directory('form-attachments'),
+                            ])
+                            ->addable(false)
+                            ->deletable(false),
+                        Repeater::make('versions')
+                            ->visible(fn($record, $get) => $get('type_id') == 3)
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\FileUpload::make('path')
+                                    ->disk('s3')
+                                    ->acceptedFileTypes(['video/*'])
                                     ->directory('form-attachments'),
                             ])
                             ->addable(false)
