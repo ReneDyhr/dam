@@ -130,6 +130,11 @@ class FileResource extends Resource
                     ->label('Categories'),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
+                Tables\Actions\CreateAction::make('open')
+                    ->label('Public URL')
+                    ->url(function ($record) {
+                        return \env('PUBLIC_URL') . $record->slug;
+                    }),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
