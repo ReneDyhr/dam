@@ -1,15 +1,15 @@
 FROM php:8.3-apache
 
-ARG PHP_EXTS="bcmath ctype fileinfo mbstring pdo pdo_mysql dom pcntl gd"
+ARG PHP_EXTS="bcmath ctype fileinfo mbstring pdo pdo_mysql intl dom pcntl zip gd sodium"
 
 ARG PHP_EXTS
 
 RUN apt update \
-    && apt install -y libonig-dev libxml2-dev libzip-dev libpng-dev libjpeg-dev libfreetype6-dev libwebp-dev cron curl supervisor \
+    && apt install -y libonig-dev libicu-dev libsodium-dev libxml2-dev libzip-dev zip libpng-dev libjpeg-dev libfreetype6-dev libwebp-dev cron curl supervisor \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && docker-php-ext-install -j$(nproc) ${PHP_EXTS} \
     && a2enmod rewrite \
-    && apt purge -y --auto-remove libonig-dev libxml2-dev libzip-dev
+    && apt purge -y --auto-remove libonig-dev libxml2-dev
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
@@ -40,8 +40,6 @@ RUN /usr/local/bin/composer install --no-interaction --optimize-autoloader --no-
     && /usr/local/lib/node_modules/npm/bin/npm-cli.js run build
 
 RUN chown -R www-data:www-data /var/www/html/
-
-RUN php artisan vendor:publish --tag=telescope-assets --force
 
 USER www-data
 
