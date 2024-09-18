@@ -6,11 +6,6 @@ use Illuminate\Support\Facades\Route;
 use App\Models\File;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
 Route::get('/files/{slug}', function ($slug) {
     $file = File::where('slug', $slug)->firstOrFail();
     $version = $file->versions()->where('status', 'active')->firstOrFail();
