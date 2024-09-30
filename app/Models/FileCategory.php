@@ -21,4 +21,14 @@ class FileCategory extends Model
     protected $fillable = [
         'name',
     ];
+
+    /**
+     * Get the files for the file category.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<File>
+     */
+    public function files(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(File::class, 'category_id');
+    }
 }

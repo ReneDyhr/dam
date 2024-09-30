@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Models\FileCategory;
+use App\Models\FileType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -10,31 +14,31 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('file_categories', function (Blueprint $table) {
+        Schema::create('file_categories', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });
 
-        Schema::create('file_types', function (Blueprint $table) {
+        Schema::create('file_types', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });
 
-        Schema::create('files', function (Blueprint $table) {
+        Schema::create('files', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->foreignId('type_id')->index();
-            $table->foreignId('category_id')->index();
+            $table->foreignIdFor(FileType::class);
+            $table->foreignIdFor(FileCategory::class);
             $table->timestamps();
             $table->softDeletes();
         });
 
-        Schema::create('file_versions', function (Blueprint $table) {
+        Schema::create('file_versions', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->string('path');
@@ -43,7 +47,7 @@ return new class extends Migration {
                 'active',
                 'inactive',
             ]);
-            $table->foreignId('file_id')->index();
+            $table->foreignIdFor(File::class);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -57,5 +61,6 @@ return new class extends Migration {
         Schema::dropIfExists('file_categories');
         Schema::dropIfExists('files');
         Schema::dropIfExists('file_versions');
+        Schema::dropIfExists('file_types');
     }
 };

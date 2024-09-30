@@ -14,6 +14,12 @@ class EditFile extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+            Actions\Action::make('Download')
+                ->visible(fn($record) => $record->versions()->where('status', 'active')->count() === 1)
+                ->label('Public URL')
+                ->url(function ($record) {
+                    return \env('PUBLIC_URL') . $record->slug;
+                }, true),
         ];
     }
 }

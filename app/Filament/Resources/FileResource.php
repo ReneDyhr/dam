@@ -113,14 +113,8 @@ class FileResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('category')
@@ -131,10 +125,11 @@ class FileResource extends Resource
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\CreateAction::make('open')
+                    ->visible(fn($record) => $record->versions()->where('status', 'active')->count() === 1)
                     ->label('Public URL')
                     ->url(function ($record) {
                         return \env('PUBLIC_URL') . $record->slug;
-                    }),
+                    }, true),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
