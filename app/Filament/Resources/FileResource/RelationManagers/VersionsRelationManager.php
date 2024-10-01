@@ -86,7 +86,7 @@ class VersionsRelationManager extends RelationManager
 
                         // If the status is 'active', set all other records to 'inactive'
                         if ($data['status'] === 'active') {
-                            $record->newQuery()->where('status', 'active')->update(['status' => 'inactive']);
+                            $record->newQuery()->where('status', 'active')->whereFileId($record->file_id)->update(['status' => 'inactive']);
                         }
 
                         $record->save();
