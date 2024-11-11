@@ -7,7 +7,9 @@ use App\Models\File;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 Route::get('/files/{slug}', function ($slug) {
-    $file = File::where('slug', $slug)->firstOrFail();
+    $extension = pathinfo($slug, PATHINFO_EXTENSION);
+    $slug = pathinfo($slug, PATHINFO_FILENAME);
+    $file = File::where('slug', $slug)->where('extension', $extension)->firstOrFail();
     $version = $file->versions()->where('status', 'active')->firstOrFail();
     $path = $version->path;
     $disk = Storage::disk('s3');

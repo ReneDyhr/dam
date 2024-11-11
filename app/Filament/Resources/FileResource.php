@@ -41,6 +41,18 @@ class FileResource extends Resource
                             ->relationship(name: "type", titleAttribute: "name")
                             ->preload()
                             ->live(),
+                        Forms\Components\Select::make('extension')
+                            ->name('Extension')
+                            ->disabled(fn($record) => !is_null($record))
+                            ->placeholder('Select an extension')
+                            ->options([
+                                "pdf" => "PDF",
+                                "jpg" => "JPG",
+                                "png" => "PNG",
+                                "mp4" => "MP4",
+                                "zip" => "ZIP",
+                            ])
+                            ->live(),
                         Forms\Components\Select::make('category_id')
                             ->required()
                             ->name('Category')

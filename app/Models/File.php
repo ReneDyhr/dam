@@ -16,7 +16,7 @@ class File extends Model
     use HasFactory;
     use SoftDeletes;
 
-     /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -24,11 +24,13 @@ class File extends Model
     protected $fillable = [
         'name',
         'slug',
+        'extension',
         'type_id',
         'category_id',
     ];
 
-    protected static function boot(): void {
+    protected static function boot(): void
+    {
         parent::boot();
 
         static::creating(function ($file): void {
