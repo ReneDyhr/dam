@@ -140,7 +140,7 @@ class FileResource extends Resource
                     ->visible(fn($record) => $record->versions()->where('status', 'active')->count() === 1)
                     ->label('Public URL')
                     ->url(function ($record) {
-                        return \env('PUBLIC_URL') . $record->slug;
+                        return \env('PUBLIC_URL') . $record->slug . ($record->extension ? '.' . $record->extension : '');
                     }, true),
                 Tables\Actions\EditAction::make(),
             ])
