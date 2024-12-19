@@ -7,7 +7,7 @@ use App\Models\File;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 Route::get('/files/{slug}', function ($slug) {
-    $extension = pathinfo($slug, PATHINFO_EXTENSION);
+    $extension = pathinfo($slug, PATHINFO_EXTENSION) ?: null;
     $slug = pathinfo($slug, PATHINFO_FILENAME);
     $file = File::where('slug', $slug)->where('extension', $extension)->firstOrFail();
     $version = $file->versions()->where('status', 'active')->firstOrFail();
