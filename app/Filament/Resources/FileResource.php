@@ -111,6 +111,19 @@ class FileResource extends Resource
                             ])
                             ->addable(false)
                             ->deletable(false),
+                        Repeater::make('versions')
+                            ->visible(fn($record, $get) => $get('type_id') == 4)
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\FileUpload::make('path')
+                                    ->disk('s3')
+                                    ->directory('form-attachments'),
+                            ])
+                            ->addable(false)
+                            ->deletable(false),
                     ]) : Forms\Components\Hidden::make(""),
             ]);
     }
