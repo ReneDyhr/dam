@@ -26,6 +26,7 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY docker/production/supervisor.conf /etc/supervisor/conf.d/worker.conf
+COPY docker/production/dam.ini /usr/local/etc/php/conf.d/dam.ini
 
 WORKDIR /var/www/html/
 
