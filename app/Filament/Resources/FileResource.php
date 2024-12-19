@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Cache;
 
 class FileResource extends Resource
 {
@@ -45,13 +46,41 @@ class FileResource extends Resource
                             ->name('Extension')
                             ->disabled(fn($record) => !is_null($record))
                             ->placeholder('Select an extension')
-                            ->options([
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                            ])
+                            ->createOptionUsing(function (array $data) {
+                                $newOption = strtolower($data['name']); // Lowercase for the value
+                                $label = ucfirst($data['name']);       // Capitalize the label
+                    
+                                // Store new options persistently
+                                $options = Cache::get('extensions', [
+                                    "pdf" => "PDF",
+                                    "jpg" => "JPG",
+                                    "png" => "PNG",
+                                    "mp4" => "MP4",
+                                    "zip" => "ZIP",
+                                    "VTT" => "VTT",
+                                ]);
+
+                                $options[$newOption] = $label;
+
+                                Cache::put('extensions', $options); // Save updated options to cache
+                    
+                                return [
+                                    'value' => $newOption,
+                                    'label' => $label,
+                                ];
+                            })
+                            ->options(fn() => Cache::get('extensions', [
                                 "pdf" => "PDF",
                                 "jpg" => "JPG",
                                 "png" => "PNG",
                                 "mp4" => "MP4",
                                 "zip" => "ZIP",
-                            ])
+                                "VTT" => "VTT",
+                            ])) // Dynamically fetch options
                             ->live(),
                         Forms\Components\Select::make('cache_time')
                             ->name('Cache Time')
