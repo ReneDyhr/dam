@@ -53,6 +53,18 @@ class FileResource extends Resource
                                 "zip" => "ZIP",
                             ])
                             ->live(),
+                        Forms\Components\Select::make('cache_time')
+                            ->name('Cache Time')
+                            ->placeholder('Select a cache time')
+                            ->required()
+                            ->options([
+                                "86400" => "1 day",
+                                "172800" => "2 days",
+                                "604800" => "1 week",
+                                "1209600" => "2 weeks",
+                                "2592000" => "1 month",
+                            ])
+                            ->live(),
                         Forms\Components\Select::make('category_id')
                             ->required()
                             ->name('Category')

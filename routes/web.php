@@ -28,10 +28,13 @@ Route::get('/files/{slug}', function ($slug) {
         fclose($stream);
     });
 
+    $cacheTime = (int) $file->cache_time ?? 86400;
+    $cacheTimeDate = now()->addSeconds($cacheTime);
     // Set headers
     $response->headers->set('Content-Type', $mimeType);
-    $response->headers->set('Cache-Control', 'max-age=86400');
-    $response->headers->set('Expires', now()->addDay()->toRfc7231String());
+    $response->headers->set('Cache-Control', 'max-age=' . $cacheTime);
+
+    $response->headers->set('Expires', $cacheTimeDate->toRfc7231String());
 
     return $response;
 });

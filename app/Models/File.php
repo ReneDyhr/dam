@@ -25,6 +25,7 @@ class File extends Model
         'name',
         'slug',
         'extension',
+        'cache_time',
         'type_id',
         'category_id',
     ];
